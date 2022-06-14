@@ -1,0 +1,78 @@
+// DISTANCE SENSOR + NEOPIXEL LED LIGHT CODE
+
+#include <NewPing.h>
+#include <Servo.h>
+#include <FastLED.h>
+Servo myservo;
+
+// How many leds in your strip?
+#define NUM_LEDS 5
+//What pin is DIN connected to
+#define DATA_PIN 2
+// Define the array of leds
+CRGB leds[NUM_LEDS];
+
+
+
+int distance = 0;
+
+#define trigPin  3
+#define echoPin 5
+#define maxDistance 400
+
+
+
+NewPing sonar( trigPin, echoPin, maxDistance);
+
+void setup() {
+  Serial.begin( 9600 );
+
+  myservo.attach(9);
+  FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
+
+
+}
+void loop() {
+
+
+  //READ THE DISTANCE SNESOR
+  distance = sonar.ping_cm();
+  Serial.println(distance);
+
+ 
+  // THE DISTANCE BETWEEN THE CAR AND THE SENSOR
+  if (distance >= 1 && distance <= 15) {
+    FastLED.show();
+    fadeLight(1);
+    myservo.write(59);
+    delay(3000); 
+  }
+   
+  else {
+    FastLED.clear();
+    FastLED.show();
+    myservo.write(0);
+    delay(100);
+  }
+
+  
+
+
+ 
+  //Control the fade time of the LED
+  
+}
+  // Function to control the colours of the LED
+  void fadeLight(int fadeTime) {
+    for (byte i = 0; i < 255; i++) {
+      leds[0] = CRGB(i, i, i);
+      leds[1] = CRGB(i, i, i);
+      leds[2] = CRGB(i, i, i);
+      leds[3] = CRGB(i, i, i);
+      leds[4] = CRGB(i, i, i);
+      //needed to update the led
+      FastLED.show();
+      delay(fadeTime);
+    }
+
+  }
